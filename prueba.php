@@ -4,7 +4,7 @@ include ('simple_html_dom.php');
 use Goutte\Client;
 $client=new Client();
 
-$data=recupera_links($client, "https://jkanime.net/directorio/2/animes/2020/");
+$data=recupera_links($client, "https://listado.mercadolibre.com.mx/xiaomi#D[A:xiaomi]");
 foreach ($data as $valor) {
     descargar_imagen($valor,nombre($valor));
 
@@ -12,7 +12,7 @@ foreach ($data as $valor) {
 
 
 function nombre($url){
-    $cortar=explode("https://cdn.jkdesu.com/assets/images/animes/image/",$url);
+    $cortar=explode("https://http2.mlstatic.com/D_NQ_NP_",$url);
     return $cortar[1];
 }
 function connexion_pagina(Client $client, $url, $op){
@@ -24,10 +24,11 @@ function connexion_pagina(Client $client, $url, $op){
           return $html=str_get_html($contenido);
     }
 }
+
 function recupera_links(Client $client,$url){
     $content=connexion_pagina($client,$url,1);
     $images;
-    $img="https://cdn.jkdesu.com/assets/images/animes/image/";
+    $img="https://http2.mlstatic.com/D_NQ_NP_";
 while(strpos($content, $img)){
     $possible_url = substr($content, strpos($content, $img));
     $pos_final = strpos($possible_url, '"');
