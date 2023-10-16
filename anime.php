@@ -1,5 +1,4 @@
 <?php
-
 require 'vendor/autoload.php';
 include ('simple_html_dom.php');
 use Goutte\Client;
@@ -7,6 +6,8 @@ $client=new Client();
 $html=connexion_pagina($client,"https://jkanime.net/directorio/",2);
 
 $d=extraer_titles($html);
+$p=extraer_descrip($html);
+var_dump($p);
 var_dump($d);
 
 function connexion_pagina(Client $client, $url, $op){
@@ -32,3 +33,13 @@ foreach ($custom_item_elements as $custom_item_element) {
 }
 return $resul;
 }
+
+function extraer_descrip($html){
+    $resultado=array();
+    $descripcion=$html->find('p.card-text.synopsis');
+    foreach($descripcion as $valor){
+            $resultado[]=$valor->plaintext;
+    }
+    return $resultado;
+}
+
