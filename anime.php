@@ -3,8 +3,8 @@ require 'vendor/autoload.php';
 include ('simple_html_dom.php');
 use Goutte\Client;
 $client=new Client();
-$html=connexion_pagina($client,"https://jkanime.net/directorio/",2);
-$content=connexion_pagina($client,"https://jkanime.net/directorio/",1);
+$html=connexion_pagina($client,"https://jkanime.net/directorio/finalizados/",2);
+$content=connexion_pagina($client,"https://jkanime.net/directorio/finalizados/",1);
 $d=extraer_titles($html);
 $p=extraer_descrip($html);
 $i=extraer_image($html);
@@ -13,6 +13,31 @@ var_dump($p);
 var_dump($d);
 var_dump($i);
 var_dump($i2);
+$capa1=array();
+foreach($i2 as $valor){
+    $capa1[]=limpiar_url($valor);
+}
+$video=array();
+foreach($capa1 as $prueba){
+    $contenido=connexion_pagina($client,$prueba,1);
+    $resulPagina=primera_capa_video($contenido);
+    $video[]="https://jkanime.net/".$resulPagina[0];
+}
+$original=array();
+foreach($video as $buscar){
+    $contenido=connexion_pagina($client,$buscar,1);
+    $resulPagina=segunda_capa_video($contenido);
+    $original[]=$resulPagina[0];
+}
+var_dump($original);
+
+
+function limpiar_url($url){
+    $name=str_replace("https://cdn.jkdesu.com/assets/images/animes/image/","",$url);
+    $limpio=str_replace(".jpg","",$name);
+    return "https://jkanime.net/".$limpio."/1"."/";
+
+}
 
 function connexion_pagina(Client $client, $url, $op){
     $peticion=$client->request("GET",$url);
@@ -59,6 +84,42 @@ function extraer_image($html){
 function extraer_image_recorrido($content){
     $images;
     $img="https://cdn.jkdesu.com/assets/images/animes/image/";
+while(strpos($content, $img)){
+    $possible_url = substr($content, strpos($content, $img));
+    $pos_final = strpos($possible_url, '"');
+    $pos2_final = strpos($possible_url, "'");
+    if($pos2_final > 0 && $pos2_final < $pos_final){
+        $pos_final = $pos2_final;
+    }
+    $possible_url = substr($possible_url, 0, $pos_final);
+    
+    $content = substr($content, strpos($content, $img) + 1);
+     $images[]= $possible_url;
+}
+return $images;
+}
+
+function primera_capa_video($content){
+    $images;
+    $img="um.php?e=";
+while(strpos($content, $img)){
+    $possible_url = substr($content, strpos($content, $img));
+    $pos_final = strpos($possible_url, '"');
+    $pos2_final = strpos($possible_url, "'");
+    if($pos2_final > 0 && $pos2_final < $pos_final){
+        $pos_final = $pos2_final;
+    }
+    $possible_url = substr($possible_url, 0, $pos_final);
+    
+    $content = substr($content, strpos($content, $img) + 1);
+     $images[]= $possible_url;
+}
+return $images;
+}
+
+function segunda_capa_video($content){
+    $images;
+    $img="https://moodle1.myyschool";
 while(strpos($content, $img)){
     $possible_url = substr($content, strpos($content, $img));
     $pos_final = strpos($possible_url, '"');
