@@ -4,7 +4,7 @@ include ('simple_html_dom.php');
 use Goutte\Client;
 $client=new Client();
 
-$data=recupera_links($client, "https://listado.mercadolibre.com.mx/xiaomi#D[A:xiaomi]");
+$data=recupera_links($client, "AQUI PON LA URL");
 foreach ($data as $valor) {
     descargar_imagen($valor,nombre($valor));
 
